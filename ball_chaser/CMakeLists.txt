@@ -12,11 +12,14 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  cv_bridge
+  sensor_msgs
+  image_transport
 )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
-
+find_package(OpenCV REQUIRED COMPONENTS)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -122,6 +125,7 @@ catkin_package(
 include_directories(
  include
  ${catkin_INCLUDE_DIRS}
+ ${OpenCV_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -154,16 +158,21 @@ include_directories(
 #${catkin_LIBRARIES}
 #)
 
+#service server
 add_executable(command_robot src/drive_bot.cpp)
 target_link_libraries(command_robot ${catkin_LIBRARIES})
 #add_dependencies(command_robot ball_chaser_gencfg)
 
-
-
-#
+#client
 add_executable(command_robot_client src/drive_bot_client.cpp)
 target_link_libraries(command_robot_client ${catkin_LIBRARIES})
 #add_dependencies(command_robot_client ball_chaser_gencfg)
+
+#image process_image
+add_executable(process_image src/process_image.cpp)
+target_link_libraries(process_image ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+#add_dependencies(process_image drive_bot.cpp)
+
 #############
 ## Install ##
 #############
