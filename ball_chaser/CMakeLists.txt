@@ -110,7 +110,7 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ball_chaser
   CATKIN_DEPENDS message_generation roscpp rospy std_msgs
-  DEPENDS system_lib
+  #DEPENDS system_lib
 )
 
 ###########
@@ -154,16 +154,16 @@ include_directories(
 #${catkin_LIBRARIES}
 #)
 
-add_executable(command_robot ${ball_chaser}src/drive_bot.cpp)
+add_executable(command_robot src/drive_bot.cpp)
 target_link_libraries(command_robot ${catkin_LIBRARIES})
 #add_dependencies(command_robot ball_chaser_gencfg)
 
 
 
 #
-#add_dependencies(ball_chaser_client src/drive_bot.cpp)
-#target_link_libraries(ball_chaser ${catkin_LIBRARIES})
-#add_executable(ball_chaser_client src/drive_bot_cpp)
+add_executable(command_robot_client src/drive_bot_client.cpp)
+target_link_libraries(command_robot_client ${catkin_LIBRARIES})
+#add_dependencies(command_robot_client ball_chaser_gencfg)
 #############
 ## Install ##
 #############

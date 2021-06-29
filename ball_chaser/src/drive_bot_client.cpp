@@ -18,28 +18,6 @@ ros::Publisher motor_command_publisher;
 // ROS::ServiceServer
 //ros::ServiceServer service;
 
-bool chaise(ball_chaser::DriveToTarget::Request  &req,
-         ball_chaser::DriveToTarget::Response &res){
-    
-    ROS_INFO("ROS service chaise");
-    // Create a ROS NodeHandle object
-    ros::NodeHandle nh;
-    ROS_INFO("request:x= %f ang:z=%f",req.linear_x, req.angular_z);
-    // ros::publisher
-    motor_command_publisher = nh.advertise<geometry_msgs::Twist>("/cmd_vel", 10);
-    // Create a motor_command object of type geometry_msgs::Twist
-    geometry_msgs::Twist motor_command;
-    // Set wheel velocities, forward [0.5, 0.0]
-    motor_command.linear.x = req.linear_x;
-    motor_command.angular.z = req.angular_z;
-    // Publish angles to drive the robot
-    motor_command_publisher.publish(motor_command);
-    //ROS_INFO("sending back response");
-   
-    return true;
- }
-
-
 int main(int argc, char** argv)
 {
     // Initialize a ROS node
@@ -67,16 +45,22 @@ int main(int argc, char** argv)
         motor_command_publisher.publish(motor_command);
     }***/
     // Initialize service
-    ROS_INFO("Service");
-    ros::ServiceServer service = nh.advertiseService("command_robot", chaise);
+    ROS_INFO("Client");
     
-    ROS_INFO("Ready on");
-
-    // TODO: Handle ROS communication events
-    ros::Rate loop_rate(20);
-    ros::spin();
-    //ros::spinOnce();
-    //loop_rate.sleep();
-
+    
+    ros::ServiceClient client = nh.serviceClient<ball_chaser::DriveToTarget>("command_robot_client");
+    ball_chaser::DriveToTarget srv;
+    // call service
+    if (client.call(srv)) {
+    // success                                            
+    ROS_INFO("Call Succeed");
+    }
+    else {
+    // error
+    ROS_ERROR("Faild to call service wheel");
+    return 1;
+    }
+    
+    
     return 0;
 }
