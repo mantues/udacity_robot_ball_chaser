@@ -203,6 +203,7 @@ target_link_libraries(command_robot_client ${catkin_LIBRARIES})
 install(
 FILES
  $(ball_chaser)/src/drove_bot.cpp
+ $(ball_chaser)/launch/ball_chaser.launch
    # myfile2
    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
