@@ -70,12 +70,12 @@ add_service_files(
 
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
-  DEPENDENCIES
-  #message_generation
-  roscpp
-  #rospy
-  std_msgs
- )
+ DEPENDENCIES
+ #message_generation
+ roscpp
+# rospy
+ std_msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -107,10 +107,10 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES ball_chaser
+  INCLUDE_DIRS include
+  LIBRARIES ball_chaser
   CATKIN_DEPENDS message_generation roscpp rospy std_msgs
-#  DEPENDS system_lib
+  DEPENDS system_lib
 )
 
 ###########
@@ -120,7 +120,8 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
- include ${catkin_INCLUDE_DIRS}
+ include
+ ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -153,9 +154,9 @@ include_directories(
 #${catkin_LIBRARIES}
 #)
 
-add_executable(drive_bot_server src/drive_bot.cpp)
-target_link_libraries(drive_bot_server ${catkin_LIBRARIES})
-#add_dependencies(drive_bot_server ${PROJECT_NAME}_gencfg)
+add_executable(command_robot ${ball_chaser}src/drive_bot.cpp)
+target_link_libraries(command_robot ${catkin_LIBRARIES})
+#add_dependencies(command_robot ball_chaser_gencfg)
 
 
 
@@ -199,11 +200,12 @@ target_link_libraries(drive_bot_server ${catkin_LIBRARIES})
 # )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
-# install(FILES
-#   # myfile1
-#   # myfile2
-#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-# )
+install(
+FILES
+ $(ball_chaser)/src/drove_bot.cpp
+   # myfile2
+   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
 
 #############
 ## Testing ##
