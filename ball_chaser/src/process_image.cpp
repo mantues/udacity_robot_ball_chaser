@@ -7,11 +7,49 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
-
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
+//all
 cv::Mat image;
+//center
+cv::Mat c_image;
+//left
+
+//right
+cv::Mat r_image;
+//all
+cv::Mat gray_img;
+cv::Mat c_gray_img;
+cv::Mat l_gray_img;
+cv::Mat r_gray_img;
+//all
+cv::Mat bin_img;
+cv::Mat c_bin_img;
+cv::Mat l_bin_img;
+cv::Mat r_bin_img;
 
 // Define a global client that can request services
 ros::ServiceClient client;
+
+int calc_image(cv::Mat img, int originx, int originy, int cropx, int cropy){
+    cv::Mat crop_image(img, cv::Rect(int(originx),int(originy),
+     int(cropx), int(cropy)));
+    //convert gray
+    cv::Mat crop_gray_img;
+    cvtColor(crop_image, crop_gray_img, cv::COLOR_BGR2GRAY);
+    //convert binary
+    cv::Mat crop_bin_img;
+    threshold(crop_gray_img, crop_bin_img, 240, 255, cv::THRESH_BINARY);
+    int num = cv::countNonZero(crop_bin_img);
+    return num;
+    
+}
+
+void put_text_img(cv::Mat img, int number){
+    cv::putText(img, "Math: "+std::to_string(number), cv::Point(50,50), cv::FONT_HERSHEY_PLAIN, 1.2, cv::Scalar(255,255,255), 2, CV_AA);
+    
+    
+}
 
 // This function calls the command_robot service to drive the robot in the specified direction
 void drive_robot(float lin_x, float ang_z)
@@ -36,7 +74,21 @@ void process_image_callback(const sensor_msgs::ImageConstPtr& msg)
     catch (cv_bridge::Exception& e) {
        ROS_ERROR("cv_bridge exception: %s", e.what());
        }
+    int w = image.size().width;
+    int h = image.size().height;
+    
+    cv::Mat l_image(image, cv::Rect(0,0, int(0.333*w), h));
+    //convert gray
+    cvtColor(l_image, l_gray_img, cv::COLOR_BGR2GRAY);
+    //convert binary
+    threshold(l_gray_img, l_bin_img, 240, 255, cv::THRESH_BINARY);
+    int num = cv::countNonZero(l_bin_img);
+    int calc = calc_image(image, 0,0, w,h);
+    put_text_img(image, calc);
+    put_text_img(l_bin_img, num);
+    
     cv::imshow("image", image);
+    cv::imshow("bin_image", l_bin_img);
     cv::waitKey(1);
     
 }
