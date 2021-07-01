@@ -164,11 +164,11 @@ target_link_libraries(command_robot ${catkin_LIBRARIES})
 #add_dependencies(command_robot ball_chaser_gencfg)
 
 #client
-add_executable(command_robot_client src/drive_bot_client.cpp)
-target_link_libraries(command_robot_client ${catkin_LIBRARIES})
+#add_executable(command_robot_client src/drive_bot_client.cpp)
+#target_link_libraries(command_robot_client ${catkin_LIBRARIES})
 #add_dependencies(command_robot_client ball_chaser_gencfg)
 
-#image process_image
+#image process_image & client
 add_executable(process_image src/process_image.cpp)
 target_link_libraries(process_image ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 #add_dependencies(process_image drive_bot.cpp)
