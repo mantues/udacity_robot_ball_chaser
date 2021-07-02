@@ -35,6 +35,9 @@ void put_text_img(cv::Mat img, int number){
     cv::putText(img, "Math: "+std::to_string(number), cv::Point(50,50), cv::FONT_HERSHEY_PLAIN, 1.2, cv::Scalar(255,255,255), 2, CV_AA);
 }
 
+bool comp(int a, int b){
+    return (a < b);
+}
 
 int calc_image(cv::Mat img, int originx, int originy, int cropx, int cropy){
     cv::Mat crop_image(img, cv::Rect(int(originx),int(originy),
