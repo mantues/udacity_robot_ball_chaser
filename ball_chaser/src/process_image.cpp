@@ -9,24 +9,6 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
-//all
-cv::Mat image;
-//center
-cv::Mat c_image;
-//left
-cv::Mat l_image;
-//right
-cv::Mat r_image;
-//all
-cv::Mat gray_img;
-cv::Mat c_gray_img;
-cv::Mat l_gray_img;
-cv::Mat r_gray_img;
-//all
-cv::Mat bin_img;
-cv::Mat c_bin_img;
-cv::Mat l_bin_img;
-cv::Mat r_bin_img;
 
 // Define a global client that can request services
 ros::ServiceClient client;
@@ -91,7 +73,7 @@ void process_image_callback(const sensor_msgs::ImageConstPtr& msg)
     // Then, identify if this pixel falls in the left, mid, or right side of the image
     // Depending on the white ball position, call the drive_bot function and pass velocities to it
     // Request a stop when there's no white ball seen by the camera
-    
+    cv::Mat image, l_image, c_image, r_image;
     try {
        image = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8)->image;
        }
