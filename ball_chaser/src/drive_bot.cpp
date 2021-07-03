@@ -21,7 +21,8 @@ ros::Publisher motor_command_publisher;
 bool chaise(ball_chaser::DriveToTarget::Request  &req,
          ball_chaser::DriveToTarget::Response &res){
     
-    ROS_INFO("ROS service chaise");
+    // Comment
+    ROS_INFO("ROS service chaise function");
     // Create a ROS NodeHandle object
     ros::NodeHandle nh;
     ROS_INFO("request:x= %f ang:z=%f",req.linear_x, req.angular_z);
@@ -46,15 +47,11 @@ int main(int argc, char** argv)
     ROS_INFO("Initialize a ROS node");
     ros::init(argc, argv, "ball_chaser");
 
-
-    // Create a ROS NodeHandle object
-    ros::NodeHandle nh;
-
     // Inform ROS master that we will be publishing a message of type geometry_msgs::Twist on the robot actuation topic with a publishing queue size of 10
     //motor_command_publisher = nh.advertise<geometry_msgs::Twist>("/cmd_vel", 10);
 
     // TODO: Define a drive /ball_chaser/command_robot service with a handle_drive_request callback function
-    
+
 
     // TODO: Delete the loop, move the code to the inside of the callback function and make the necessary changes to publish the requested velocities instead of constant values
     /***while (ros::ok()) {
@@ -66,10 +63,12 @@ int main(int argc, char** argv)
         // Publish angles to drive the robot
         motor_command_publisher.publish(motor_command);
     }***/
+
+    // Create a ROS NodeHandle object
+    ros::NodeHandle nh;
     // Initialize service
-    ROS_INFO("Service");
     ros::ServiceServer service = nh.advertiseService("command_robot", chaise);
-    
+    // check comment
     ROS_INFO("Ready on");
 
     // TODO: Handle ROS communication events

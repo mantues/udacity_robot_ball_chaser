@@ -13,24 +13,30 @@
 // Define a global client that can request services
 ros::ServiceClient client;
 
+// put text to image 
 void put_text_img(cv::Mat img, int number){
     cv::putText(img, "Math: "+std::to_string(number), cv::Point(50,50), cv::FONT_HERSHEY_PLAIN, 1.2, cv::Scalar(255,255,255), 2, CV_AA);
 }
 
+// std::max function
 bool comp(int a, int b){
     return (a < b);
 }
 
+// calculate area in cropped image
 int calc_image(cv::Mat img, int originx, int originy, int cropx, int cropy){
+    //crop image
     cv::Mat crop_image(img, cv::Rect(int(originx),int(originy),
      int(cropx), int(cropy)));
-    //convert gray
+    //convert gray image
     cv::Mat crop_gray_img;
     cvtColor(crop_image, crop_gray_img, cv::COLOR_BGR2GRAY);
-    //convert binary
+    //convert binary image
     cv::Mat crop_bin_img;
     threshold(crop_gray_img, crop_bin_img, 240, 255, cv::THRESH_BINARY);
+    // calculate area in binary image
     int num = cv::countNonZero(crop_bin_img);
+    // put text(area) image
     put_text_img(crop_image, num);
     //cv::imshow("crop_image", crop_image);
     //cv::waitKey(1);
@@ -52,7 +58,7 @@ void drive_robot(float lin_x, float ang_z){
     srv.request.angular_z = ang_z;
     // call service
     if (client.call(srv)) {
-    // success                                            
+    // success
     ROS_INFO("Call Succeed");
     }
     else {
@@ -75,11 +81,14 @@ void process_image_callback(const sensor_msgs::ImageConstPtr& msg)
     // Request a stop when there's no white ball seen by the camera
     cv::Mat image, l_image, c_image, r_image;
     try {
+        //convert image message to opencv image using cv_bridge
        image = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8)->image;
        }
     catch (cv_bridge::Exception& e) {
+        //error
        ROS_ERROR("cv_bridge exception: %s", e.what());
        }
+    // calculate width and height
     int w = image.size().width;
     int h = image.size().height;
     int calc_l, calc_c, calc_r;
@@ -87,36 +96,36 @@ void process_image_callback(const sensor_msgs::ImageConstPtr& msg)
     l_image, calc_l = calc_image(image, 0,0, int(0.333*w), h);
     //center area
     c_image, calc_c = calc_image(image, int(0.333*w),0, int(0.333*w),h);
-    
     //right area
     r_image, calc_r = calc_image(image, int(0.666*w),0, int(0.333*w),h);
-    
-    
-    
+
+    //setting movement
+    //linx:Forward and Backward, rotation:angz
     float linx, angz=0.25;
+    // moving robot(keep distance from ball)
     if(std::max({calc_r,calc_l,calc_c})< 6500){
         linx=2.0;
     }
+    else if(7000 < std::max({calc_r,calc_l,calc_c})){
+        linx=-2.0;
+    }
     else{ linx=0.0;}
-    
+    //trun left
     if(calc_r < calc_l && calc_c < calc_l){
         drive_robot(linx, angz*-1);
     }
-    
+    //move forward and backward
     else if(calc_l < calc_c && calc_r < calc_c){
         drive_robot(linx, 0);
     }
-    
+    //turn right
     else if(calc_l < calc_r && calc_c < calc_r){
         drive_robot(linx, angz);
     }
-    
+    //stop robot
     else{ drive_robot(0, 0);}
-    
+    //check values
     ROS_INFO("L: %d C: %d R: %d", calc_l, calc_c, calc_r);
-    
-    //drive_robot(linx, angz);
-    
 }
 
 int main(int argc, char** argv)
