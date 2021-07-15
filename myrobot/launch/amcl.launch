@@ -1,0 +1,74 @@
+<!--
+  amcl for udacity robot
+-->
+<launch>
+  <arg name="map_file" default="$(find myrobot)/maps/map.yaml"/>　<!--select map file-->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+
+
+  <!--
+    localization amcl node
+    Detail: http://wiki.ros.org/amcl
+  -->
+  <node pkg="amcl" type="amcl" name="amcl" output="screen" args="/scan:=/scan">
+    <!-- Odometry model parameters -->
+    <param name="odom_alpha" value="0.1"/>    
+    <param name="odom_alpha2" value="0.1"/>
+    <param name="odom_alpha3" value="0.1"/>
+    <param name="odom_alpha4" value="0.1"/>
+    <param name="odom_frame_id" value="odom"/>
+    <param name="odom_model_type" value="diff-corrected"/>
+    <param name="base_frame_id" value="robot_footprint"/>
+    <param name="global_frame_id" value="map"/>
+    
+    <!-- Overall filter parameters -->
+    <param name="min_particles" value="50"/>
+    <param name="max_particles" value="6000"/>
+    <param name="kld_err" value="0.01"/>
+    <param name="kld_z" value="0.99"/>
+    <param name="update_min_d" value="0.05"/>
+    <param name="update_min_a" value="0.03"/>
+    <param name="resample_interval" value="2"/>
+    <param name="transform_tolerance" value="0.5"/>
+    <param name="recovery_alpha_slow" value="0.001"/>
+    <param name="recovery_alpha_fast" value="0.01"/>
+    <param name="gui_publish_rate" value="-1.0"/>
+    <param name="save_pose_rate " value="0.5"/>
+    <param name="use_map_topic" value="false" />
+    <param name="first_map_only" value="false"/>
+    <param name="selective_resampling" value="false"/>
+    
+    <!-- define initial pose here -->
+    <param name="initial_pose_x" value="-3.4"/>
+    <param name="initial_pose_y" value="-4.6"/>
+    <param name="initial_pose_a" value="0.1"/>
+
+    <!-- Laser model parameters -->
+    <param name="laser_max_beams" value="20"/>
+    <param name="laser_z_hit" value="0.7"/>
+    <param name="laser_z_short" value="0.05"/>
+    <param name="laser_z_max" value="0.05"/>
+    <param name="laser_z_rand" value="0.3"/>
+    <param name="laser_sigma_hit" value="0.2"/>
+    <param name="laser_lambda_short" value="0.1"/>
+    <param name="laser_lambda_short" value="0.1"/>
+    <param name="laser_model_type" value="likelihood_field"/>
+    <!-- <param name="laser_model_type" value="beam"/> -->
+    <param name="laser_likelihood_max_dist" value="8.0"/>
+       
+  </node>
+  
+  <!--- 　move_base node -->
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen" args="/cmd_vel:=/cmd_vel">
+    <rosparam file="$(find myrobot)/configuration_files/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find myrobot)/configuration_files/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find myrobot)/configuration_files/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find myrobot)/configuration_files/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find myrobot)/configuration_files/base_local_planner_params.yaml" command="load" />
+  </node>
+
+  <!-- Rviz -->
+  <!-- <node pkg="rviz" type="rviz" args="-d '$(find myrobot)/rviz/udacity_movebase.rviz'" name="visualizer" respawn="true" /> -->
+
+
+</launch>
