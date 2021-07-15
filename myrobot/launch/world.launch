@@ -32,7 +32,7 @@
   </include>
 
 <!--launch rviz-->
-<node name="rviz" pkg="rviz" type="rviz" respawn="false" args="-d $(find myrobot)/rviz/udacity_movebase.rviz"/>
+<node name="rviz" pkg="rviz" type="rviz" respawn="false" args="-d $(find myrobot)/rviz/udacity.rviz"/>
 
 </launch>
 
